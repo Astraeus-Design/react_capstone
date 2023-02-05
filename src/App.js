@@ -1,24 +1,189 @@
 import logo from './logo.svg';
 import './App.css';
+import React from 'react';
+import { useState, useEffect } from "react";
+/*import {Link as rLink} from 'react-router-dom';
+import {Router as rRouter} from 'react-router-dom';
+import {Routes as rRoutes} from 'react-router-dom';
+import {Route as rRoute} from 'react-router-dom';*/
+import axios from "axios";
+/*import GetUsers from './getHangouts';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import ViewUsers from './pages/view';  
+import UserCard from './components/userCard/userCard';*/
+import UserCardList from './components/userCardList/userCardList';
+
+
+//import { Link } from '@mui/material';
+
 
 function App() {
+
+  // following constants are used for creating interests and looking for data
+
+const array1=['keep fit,darts','bowls,reading,photography','theatre,literature','dancing,gardening,art','diy'];
+const array2=['knitting','karate,triathlon','swimming','car mechanics,woodwork','local history,long walks'];
+const array3=['antiques,classical music','gaming','sadomasochism,voyeurism,','playing guitar','cycling,astronomy,natural sciences'];
+
+const array4=['Cinema trips,car trips, maybe share a holiday',
+              'Cycle touring partner, share foreign travel, go to restaurants,Rockclimbing',
+              'Share Quiet nights in, go dog walking',
+              'House renovating, motorcycling, going to vintage car shows, strength training partner',
+              'Someone to go clubbing with,Getting plastered and having a laugh,maybe finding a soul mate,someone who doesnt mind children'];
+
+const [userData, setUserData] = useState({rxData:[],dataInvalid:true});         // log api data
+//const [loading, setLoading] = useState(false);
+//const [error, setError] = useState(null);
+const url='https://www.randomuser.me/api/?results=50';
+              
+              
+let rxError=true;
+let loading='true';
+let recieved=false;
+              
+
+  // first task is to acquire a database of registered users
+  // for demo purposes these are random profiles merged
+  // with a random interests and random looking for data
+
+
+
+// using url attempt to get database of registered users
+
+ useEffect(() => {
+
+  let myData=[];
+               console.log('entering the async useffect');
+ 
+  // only execute code if no database exists  
+
+  if (!localStorage.getItem('userDataBase')){
+             (async ()=>{
+              
+              try {
+                   console.log('in async function');
+                   loading=true; // used to indicate await of data
+                   const response = await axios.get(url);
+                   // when response arrives get data
+                   if (response.status===200){
+                      myData = response.data;
+                      rxError=false;
+                       console.log('received a 200 ',myData);
+                   
+                       setUserData({myData,rxError});    // set state variable 
+                       console.log('state var set, rxError is ',rxError);
+                       loading=false;
+                   }
+                   else console.log('in not 200 ',response.status);
+               } catch (error) {
+                 rxError=true;
+                 myData=[];
+                 setUserData({myData,rxError});    // set state variable 
+                 console.log('had an error ',error);
+                 console.log(error.response);
+                 alert('Error trying to connect with server please reload page');
+                 loading=false;
+              }
+
+
+              console.log('about to test rxError in final section');
+              // wait for loading to complete
+  
+              
+  
+              if (!(rxError)){
+                console.log(userData);
+                const userObj=myData.results;
+            
+                const rnd5=()=>(Math.floor(Math.random() * 5));
+            
+                // if data obtained add extra fields for interests, looking for
+                console.log('data is ',userObj);
+                let tempUsers=userObj;
+                console.log(tempUsers);
+              
+                tempUsers.forEach((element,index,array)=>{
+                  // add fake interests etc to each record
+                  let userExtras={userInterests:array1[rnd5()]+','+array2[rnd5()]+','+array3[rnd5()],
+                  userWants:array4[rnd5()]};
+                  array[index]={...array[index],userExtras};
+                  console.log(array[index]);
+                  });
+
+                  
+                  // store data in local storage if not already present
+
+                  if (!localStorage.getItem('userDataBase'))
+                  {
+                    /* create new data in local storage as a cached item */
+     
+                    localStorage.setItem('userDataBase', JSON.stringify(tempUsers));
+     
+                  };
+                  
+              }
+              else(console.log('errors encountered in data acquisition'));
+
+
+            })();          
+      }
+          
+
+          },[]);    // end of useEffect
+
+  const userObj=JSON.parse(localStorage.getItem('userDataBase'));
+
+  console.log(userObj);
+
+  const { gender,name,location,dob,picture,userExtras}=userObj[0];
+
+  console.log(gender);
+  console.log(name.first,' ',name.last);
+  console.log(location.country);
+  console.log(dob.age);
+  console.log(userExtras.userInterests);
+  console.log(userExtras.userWants);
+
+
+  // return main landing page 
+
   return (
+       <div><UserCardList usersInfo={userObj}/></div>  //switch commented   sections to view landing page and prospective view users page
+  /* 
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <div className="titleBlock">
+       <Box sx={{
+           width: '75%',
+           height: '10%',
+           backgroundColor: 'primary.main',
+           mx:'auto',
+           borderRadius:'10px',
+           marginTop:'15px'
+        }}
+      >    
+        <Typography className="mainHeader" variant="h3" sx={{color:'white',padding:'10px'}}>Looking For Me?</Typography>
+
+        <Typography className="subHeader" variant="h5" sx={{color:'black',padding:'10px',marginTop:'15px',marginBottom:'10px'}}>The PREMIER site to find new friends and hang-outs</Typography>        
+      </Box>
+      </div>
+      <div className="navButtons">
+        <Stack
+           direction={{ xs: 'column', sm: 'row' }}
+           spacing={{ xs: 3, sm: 5, md: 8 }}
+           justifyContent="center"
+           marginTop='100px'>
+           
+           <Button className="b1" size="large" variant="contained" sx={{fontSize: 24}}>Register</Button>
+           <Button className="b1" size="large" variant="contained" sx={{fontSize: 24}}>View Hang-outs</Button>
+           <Button className="b1" size="large" variant="contained" sx={{fontSize: 24}}>Messages</Button>
+
+          
+        </Stack>
+      </div>
+  </div>*/
   );
 }
 
