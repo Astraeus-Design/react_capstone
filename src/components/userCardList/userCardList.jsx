@@ -1,4 +1,6 @@
 /*import { Component } from "react";*/
+import React from 'react';
+import {useState,useRef} from 'react';
 import UserCard from "../userCard/userCard";
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
@@ -11,7 +13,14 @@ import ToggleButton from '@mui/material/ToggleButton';
 function UserCardList(props){
 
     const { usersInfo } = props;
-    console.log('in the card list function',usersInfo
+    console.log('cardlist users props ',usersInfo);
+    const [remappedUsers,setRemapped]=useState(usersInfo);
+    const remapRequired=useRef(true);  // initially true so immediate update
+
+    const [toggle1,setToggle1State]=useState('All');
+    const [toggle2,setToggle2State]=useState('All');
+ 
+    console.log('in the card list function',remappedUsers
     );
 
 
@@ -25,7 +34,87 @@ function UserCardList(props){
      setAlignment(newAlignment);
    };
   */
-    
+  const handleChange1=(e)=>{
+     console.log(e.target.value);
+     
+   //  remapArray();
+     remapRequired.current=true; // indicate a remapping update
+     setToggle1State(e.target.value);
+
+  }
+  
+  
+  const handleChange2=(e)=>{
+    console.log(e.target.value);
+    remapRequired.current=true; // indicate a remapping update
+    setToggle2State(e.target.value);
+
+ }
+
+ // if (remapRequired.current===true){
+  let baseArray=usersInfo;
+  let tempArray1=[];
+  let tempArray2=[];
+
+
+      if ((toggle1==='All')&&(toggle2==='All')){
+         //setRemapped(usersInfo);  // reset back to original data
+         tempArray2=usersInfo;
+      } 
+      else{
+
+
+        console.log(toggle1,toggle2);
+        switch(toggle1){
+          case 'male':
+                       baseArray.forEach((user)=>{
+                       if ((user.gender)==='male') tempArray1.push(user)
+                       });
+                       break;
+          case 'female':
+                       baseArray.forEach((user)=>{
+                       if (user.gender==='female') tempArray1.push(user)
+                       });                        
+
+                      break;
+          default:
+                    
+                     break;
+        }
+
+        console.log('temparray is ',tempArray1);
+        
+        switch(toggle2){
+          case '1830':
+                       tempArray1.forEach((user)=>{
+                       if ((user.dob.age>=18)&&(user.dob.age<=30)) tempArray2.push(user)
+                       });
+                       break;
+          case '3155':
+                       tempArray1.forEach((user)=>{
+                        if ((user.dob.age>=30)&&(user.dob.age<=55)) tempArray2.push(user)
+                      });
+                      break;
+          case '55+':
+                        tempArray1.forEach((user)=>{
+                         if (user.dob.age>55) tempArray2.push(user)
+                       });
+                       break;                      
+          default:
+                     tempArray2=tempArray1;
+                     break;
+        }        
+        console.log('temparray2 is ',tempArray2);
+        
+      //  setRemapped(tempArray2);
+        
+
+      }
+     // remapRequired.current=false;
+ // }
+
+     
+
     return (
 
       <div className="userCard-list">
@@ -54,12 +143,12 @@ function UserCardList(props){
 
      <ToggleButtonGroup className="genderGroup"
        color="primary"
-       //value={alignment}
+       value={toggle1}
        exclusive
-       //onChange={handleChange}
+       onChange={handleChange1}
        aria-label="Platform"
      >
-      <ToggleButton value="all">All</ToggleButton>
+      <ToggleButton value="All">All</ToggleButton>
       <ToggleButton value="male">Male</ToggleButton>
       <ToggleButton value="female">Female</ToggleButton>
     </ToggleButtonGroup>
@@ -67,14 +156,15 @@ function UserCardList(props){
 
     <ToggleButtonGroup className="ageGroup"
        color="primary"
-       //value={alignment}
+       value={toggle2}
        exclusive
-       //onChange={handleChange}
+       onChange={handleChange2}
        aria-label="Platform"
      >
-      <ToggleButton value="all">All</ToggleButton>
-      <ToggleButton value="30"> under 30yrs</ToggleButton>
-      <ToggleButton value="50">under 55yrs</ToggleButton>
+      <ToggleButton value="All">All</ToggleButton>
+      <ToggleButton value="1830"> 18-30yrs</ToggleButton>
+      <ToggleButton value="3155">31-55yrs</ToggleButton>
+      <ToggleButton value="55+">over 55yrs</ToggleButton>
     </ToggleButtonGroup>    
 
 
@@ -89,7 +179,7 @@ function UserCardList(props){
            justifyContent="flex-start"
            marginTop='15px' sx={{ flexWrap: 'wrap', gap: 1 }}>
 
-          {usersInfo.map((user) => {
+          {tempArray2.map((user) => {
             return <UserCard userData={user} />;
           })}
 

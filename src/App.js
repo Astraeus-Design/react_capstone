@@ -1,19 +1,19 @@
 import logo from './logo.svg';
 import './App.css';
 import React from 'react';
-import { useState, useEffect } from "react";
-/*import {Link as rLink} from 'react-router-dom';
+import { useState, useEffect, useRef } from "react";
+import {Link as rLink} from 'react-router-dom';
 import {Router as rRouter} from 'react-router-dom';
 import {Routes as rRoutes} from 'react-router-dom';
-import {Route as rRoute} from 'react-router-dom';*/
+import {Route as rRoute} from 'react-router-dom';
 import axios from "axios";
-/*import GetUsers from './getHangouts';
+import GetUsers from './getHangouts';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import ViewUsers from './pages/view';  
-import UserCard from './components/userCard/userCard';*/
+import UserCard from './components/userCard/userCard';
 import UserCardList from './components/userCardList/userCardList';
 
 
@@ -26,7 +26,7 @@ function App() {
 
 const array1=['keep fit,darts','bowls,reading,photography','theatre,literature','dancing,gardening,art','diy'];
 const array2=['knitting','karate,triathlon','swimming','car mechanics,woodwork','local history,long walks'];
-const array3=['antiques,classical music','gaming','sadomasochism,voyeurism,','playing guitar','cycling,astronomy,natural sciences'];
+const array3=['antiques,classical music','gaming','extreme Hedonism and debauchery,','playing guitar','cycling,astronomy,natural sciences'];
 
 const array4=['Cinema trips,car trips, maybe share a holiday',
               'Cycle touring partner, share foreign travel, go to restaurants,Rockclimbing',
@@ -37,13 +37,13 @@ const array4=['Cinema trips,car trips, maybe share a holiday',
 const [userData, setUserData] = useState({rxData:[],dataInvalid:true});         // log api data
 //const [loading, setLoading] = useState(false);
 //const [error, setError] = useState(null);
-const url='https://www.randomuser.me/api/?results=50';
+const url='https://www.randomuser.me/api/?results=100';
               
-              
+let userObj=[];              
 let rxError=true;
 let loading='true';
 let recieved=false;
-              
+const userProfiles=useRef(userObj);              
 
   // first task is to acquire a database of registered users
   // for demo purposes these are random profiles merged
@@ -56,11 +56,11 @@ let recieved=false;
  useEffect(() => {
 
   let myData=[];
-               console.log('entering the async useffect');
+  console.log('entering the async useffect');
  
   // only execute code if no database exists  
 
-  if (!localStorage.getItem('userDataBase')){
+  if (!(localStorage.getItem('userDataBase'))){
              (async ()=>{
               
               try {
@@ -73,7 +73,7 @@ let recieved=false;
                       rxError=false;
                        console.log('received a 200 ',myData);
                    
-                       setUserData({myData,rxError});    // set state variable 
+                       //setUserData({myData,rxError});    // set state variable 
                        console.log('state var set, rxError is ',rxError);
                        loading=false;
                    }
@@ -96,7 +96,7 @@ let recieved=false;
   
               if (!(rxError)){
                 console.log(userData);
-                const userObj=myData.results;
+                userObj=myData.results;
             
                 const rnd5=()=>(Math.floor(Math.random() * 5));
             
@@ -106,6 +106,12 @@ let recieved=false;
                 console.log(tempUsers);
               
                 tempUsers.forEach((element,index,array)=>{
+
+                  // ensure ages are always > 16yrs
+
+                  if (array[index].dob.age<16){
+                    array[index].dob.age=16+(Math.floor(Math.random() * 45));
+                  }
                   // add fake interests etc to each record
                   let userExtras={userInterests:array1[rnd5()]+','+array2[rnd5()]+','+array3[rnd5()],
                   userWants:array4[rnd5()]};
@@ -116,13 +122,14 @@ let recieved=false;
                   
                   // store data in local storage if not already present
 
-                  if (!localStorage.getItem('userDataBase'))
-                  {
+                //  if (!localStorage.getItem('userDataBase'))
+                //  {
                     /* create new data in local storage as a cached item */
      
                     localStorage.setItem('userDataBase', JSON.stringify(tempUsers));
-     
-                  };
+                    userProfiles.current=tempUsers;      // use userProfiles as re-mapping storage
+                    setUserData({tempUsers,rxError});    // set state
+               //   };
                   
               }
               else(console.log('errors encountered in data acquisition'));
@@ -130,29 +137,37 @@ let recieved=false;
 
             })();          
       }
-          
+      else
+      {
+        userObj=JSON.parse(localStorage.getItem('userDataBase')); 
+        console.log(userObj);
+        const { gender,name,location,dob,picture,userExtras}=userObj[0];
+        console.log(gender);
+        console.log(name.first,' ',name.last);
+        console.log(location.country);
+        console.log(dob.age);
+        console.log(userExtras.userInterests);
+        console.log(userExtras.userWants);
+        userProfiles.current=userObj;
+        rxError=false;
+        setUserData({userObj,rxError});    // set state
+      }    
 
           },[]);    // end of useEffect
 
-  const userObj=JSON.parse(localStorage.getItem('userDataBase'));
+ // const userObj=JSON.parse(localStorage.getItem('userDataBase'));
 
-  console.log(userObj);
 
-  const { gender,name,location,dob,picture,userExtras}=userObj[0];
 
-  console.log(gender);
-  console.log(name.first,' ',name.last);
-  console.log(location.country);
-  console.log(dob.age);
-  console.log(userExtras.userInterests);
-  console.log(userExtras.userWants);
+
 
 
   // return main landing page 
-
+  console.log('users are ',userProfiles.current);
   return (
-       <div><UserCardList usersInfo={userObj}/></div>  //switch commented   sections to view landing page and prospective view users page
-  /* 
+     
+       <div><UserCardList usersInfo={userProfiles.current}/></div>  //switch commented   sections to view landing page and prospective view users page
+/*   
     <div className="App">
       <div className="titleBlock">
        <Box sx={{
@@ -175,15 +190,19 @@ let recieved=false;
            spacing={{ xs: 3, sm: 5, md: 8 }}
            justifyContent="center"
            marginTop='100px'>
-           
-           <Button className="b1" size="large" variant="contained" sx={{fontSize: 24}}>Register</Button>
+          
+           <Button component={rLink} to='view' className="b1" size="large" variant="contained" sx={{fontSize: 24}}>Register</Button>
            <Button className="b1" size="large" variant="contained" sx={{fontSize: 24}}>View Hang-outs</Button>
            <Button className="b1" size="large" variant="contained" sx={{fontSize: 24}}>Messages</Button>
 
-          
+           <rRoutes>
+             <rRoute path="view" element={<ViewUsers />} />
+   
+           </rRoutes>
+                   
         </Stack>
       </div>
-  </div>*/
+  </div> */
   );
 }
 
