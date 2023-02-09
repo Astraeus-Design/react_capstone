@@ -166,29 +166,28 @@ const userProfiles=useRef(userObj);
   // return main landing page 
   console.log('users are ',userProfiles.current);
   return (
+
+//uncomment each commented section to view page content
+
+  // form component this is Register page 
+/*
     <div className='Form'>
-   <Banner textObj={{title:'Looking For Me?',strapline:'Complete Registration Below To Message New Hang-outs'}} />
-   <Registration /> 
-   </div> 
-   //    <div><UserCardList usersInfo={userProfiles.current}/></div>  //switch commented   sections to view landing page and prospective view users page
-/*   
+  
+       <Registration /> 
+    </div> 
+*/
+ // Hang-out UserCardList display..... view contacts page in effect if routing can be resolved. This is view Hang-outs page.
+
+ //      <div><UserCardList usersInfo={userProfiles.current}/></div>  
+   
+   
+// This is the main landing page for the three buttons that should have linked site together. I have struggled to get mui button links working with react-router having tried 3 or 4 different ways. 
+
+  
     <div className="App">
       <div className="titleBlock">
          <Banner textObj={{title:'Looking For Me?',strapline:'The PREMIER site to find new friends and hang-outs'}} />
-       <Box sx={{
-           width: '75%',
-           height: '10%',
-           backgroundColor: 'primary.main',
-           mx:'auto',
-           borderRadius:'10px',
-           marginTop:'15px'
-        }}
-      >    
-        <Typography className="mainHeader" variant="h3" sx={{color:'white',padding:'10px'}}>Looking For Me?</Typography>
 
-        <Typography className="subHeader" variant="h5" sx={{color:'black',padding:'10px',marginTop:'15px',marginBottom:'10px'}}>The PREMIER site to find new friends and hang-outs</Typography>        
-      </Box>
-      </div>
       <div className="navButtons">
         <Stack
            direction={{ xs: 'column', sm: 'row' }}
@@ -196,18 +195,16 @@ const userProfiles=useRef(userObj);
            justifyContent="center"
            marginTop='100px'>
           
-           <Button component={rLink} to='view' className="b1" size="large" variant="contained" sx={{fontSize: 24}}>Register</Button>
+           <Button className="b1" size="large" variant="contained" sx={{fontSize: 24}}>Register</Button>
            <Button className="b1" size="large" variant="contained" sx={{fontSize: 24}}>View Hang-outs</Button>
            <Button className="b1" size="large" variant="contained" sx={{fontSize: 24}}>Messages</Button>
 
-           <rRoutes>
-             <rRoute path="view" element={<ViewUsers />} />
-   
-           </rRoutes>
+
                    
         </Stack>
       </div>
-  </div> */
+    </div>
+  </div> 
   );
 }
 

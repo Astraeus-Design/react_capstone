@@ -23,22 +23,13 @@ function UserCardList(props){
     console.log('in the card list function',remappedUsers
     );
 
+// event handlers for toggle button changes gender and age group
 
-    //   handler commented out until a new solution found that fits my use requirements
-
-  /*  
-   const handleChange = (
-     event: React.MouseEvent<HTMLElement>,
-     newAlignment: string,
-    ) => {
-     setAlignment(newAlignment);
-   };
-  */
   const handleChange1=(e)=>{
      console.log(e.target.value);
      
    //  remapArray();
-     remapRequired.current=true; // indicate a remapping update
+     remapRequired.current=true; // indicate a remapping update, see note below
      setToggle1State(e.target.value);
 
   }
@@ -46,12 +37,13 @@ function UserCardList(props){
   
   const handleChange2=(e)=>{
     console.log(e.target.value);
-    remapRequired.current=true; // indicate a remapping update
+    remapRequired.current=true; // indicate a remapping update, not currently used as toggle1+2 are adequate for logic required
     setToggle2State(e.target.value);
 
  }
 
- // if (remapRequired.current===true){
+ // if a remap is required then perform it before rendering
+
   let baseArray=usersInfo;
   let tempArray1=[];
   let tempArray2=[];
@@ -59,6 +51,7 @@ function UserCardList(props){
 
       if ((toggle1==='All')&&(toggle2==='All')){
          //setRemapped(usersInfo);  // reset back to original data
+         
          tempArray2=usersInfo;
       } 
       else{
@@ -78,7 +71,7 @@ function UserCardList(props){
 
                       break;
           default:
-                    
+                  tempArray1=baseArray;  
                      break;
         }
 
@@ -113,7 +106,7 @@ function UserCardList(props){
      // remapRequired.current=false;
  // }
 
-     
+ // now render full user profile cards referencing the mui Card in userCard.jsx for each individual person.    
 
     return (
 

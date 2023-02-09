@@ -1,19 +1,23 @@
 import React from 'react';
 import {useState} from 'react';
-import ReactDOM from 'react-dom';
-import { useFormik } from 'formik';
-import * as yup from 'yup';
+//import ReactDOM from 'react-dom';
+//import { useFormik } from 'formik';
+//import * as yup from 'yup';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { FormControl } from '@mui/material';
-import FormLabel from '@mui/material/FormLabel';
+//import FormLabel from '@mui/material/FormLabel';
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
+import Banner from '../components/Banner/Banner';
 
-// reccomended approach to form in materialui by formik.... does not work
+
+// reccomended approach to form in mui by formik.... does not work
+// but I am finding issues with obsolete library references etc in internet documentation. 
+
 /*
 function Registration(){
 console.log('entered the form');
@@ -76,7 +80,8 @@ console.log('at return in form');
 
 function Registration(){
 
-  
+// useState vars for future use following full page routing
+
 const [firstName, setFirstName] = useState('');
 const [lastName, setLastName] = useState('');
 const [email, setEmail] = useState('');
@@ -86,18 +91,23 @@ const [gender, setGender] = useState('');
 const [interests, setInterests] = useState('');
 const [wants,setWants] = useState('');
 
- 
+// submit handler displays entered values but would forward to server in reality
+
 function handleSubmit(event) {
         event.preventDefault();
         console.log(firstName, lastName, location,age, email, interests,wants)
         alert(`The following will be passed for registration:-${firstName},${lastName},${location},${age},${gender},${email},${interests},${wants}`); 
 }
 
+
+// return renders form with all inputs and selects it calls Banner for main title. This form was created following formik-mui issues as with routing too. 
+
 return(
 
-        <Box className='registrationForm' sx={{width:'75%',marginTop: '20px',mx:'auto'}}>
-          
-          <form onSubmit={handleSubmit} sx={{width:'75%'}}>
+        <Box className='registrationForm' sx={{width:'100%',marginTop: '20px',mx:'auto'}}>
+          <Banner textObj={{title:'Looking For Me?',strapline:'Complete Registration Below To Message New Hang-outs'}} /> 
+          <Box sx={{ width:'75%',mx:'auto'}} >        
+          <form onSubmit={handleSubmit} sx={{width:'100%',marginTop:'30px'}}>
               <Stack spacing={2} direction="row" sx={{marginBottom: 4}}>
                     <TextField
                         type="text"
@@ -200,7 +210,7 @@ return(
                     />
                 <Button variant="outlined" color="secondary" type="submit">Register</Button>
             </form>
-
+           </Box>
      
         </Box>
     )
