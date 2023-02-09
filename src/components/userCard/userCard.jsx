@@ -57,7 +57,7 @@ function UserCard(props){
               
                <CardActions>
                 
-                <Button size="large" sx={{marginX:'auto'}}>Message {name.first} </Button>
+                <Button size="large" onClick={()=>{alert(`Messaging ${name.first}`)}} sx={{marginX:'auto'}}>Message {name.first} </Button>
                </CardActions>
               </CardContent>
             </Card>

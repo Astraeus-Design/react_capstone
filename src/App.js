@@ -15,7 +15,8 @@ import Typography from '@mui/material/Typography';
 import ViewUsers from './pages/view';  
 import UserCard from './components/userCard/userCard';
 import UserCardList from './components/userCardList/userCardList';
-
+import Registration from './pages/register';
+import Banner from './components/Banner/Banner';
 
 //import { Link } from '@mui/material';
 
@@ -165,11 +166,15 @@ const userProfiles=useRef(userObj);
   // return main landing page 
   console.log('users are ',userProfiles.current);
   return (
-     
-       <div><UserCardList usersInfo={userProfiles.current}/></div>  //switch commented   sections to view landing page and prospective view users page
+    <div className='Form'>
+   <Banner textObj={{title:'Looking For Me?',strapline:'Complete Registration Below To Message New Hang-outs'}} />
+   <Registration /> 
+   </div> 
+   //    <div><UserCardList usersInfo={userProfiles.current}/></div>  //switch commented   sections to view landing page and prospective view users page
 /*   
     <div className="App">
       <div className="titleBlock">
+         <Banner textObj={{title:'Looking For Me?',strapline:'The PREMIER site to find new friends and hang-outs'}} />
        <Box sx={{
            width: '75%',
            height: '10%',
